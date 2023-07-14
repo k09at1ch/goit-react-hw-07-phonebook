@@ -9,7 +9,7 @@ function Filter() {
     dispatch(updateSearchTerm(event.target.value));
   };
 
-  return (
+  return ( 
     <input
       type="text"
       placeholder="Search"
