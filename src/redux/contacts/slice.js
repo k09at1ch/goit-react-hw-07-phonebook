@@ -1,42 +1,81 @@
 import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
-
-    data: [
-      { name: 'Potato', number: 678920, id: '1' },
-      { name: 'Sasha', number: 987620, id: '2' },
-      { name: 'Quiet kid', number: 54320, id: '3' },
-      { name: 'Top G', number: 6543, id: '4' },
-      { name: 'Computer service', number: 87654, id: '5' },
-      { name: 'Bot', number: 2432, id: '6' },
-    ],
+    items: [],
+    isLoading: false,
+    error: null,
   },
   reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.data.push(action.payload);
-      },
-      prepare(name, number) {
-        return {
-          payload: {
-            id: String(Math.random()),
-            name,
-            number,
-          },
-        };
-      },
+    addContactStart(state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    addContactSuccess(state, action) {
+      state.isLoading = false;
+      state.items.push(action.payload);
+    },
+    addContactFailure(state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
     },
     deleteContact(state, action) {
-      state.data = state.data.filter(({ id }) => id !== action.payload.id);
+      state.items = state.items.filter(({ id }) => id !== action.payload.id);
     },
-    // updateSearchTerm(state, action) {
-    //   state.searchTerm = action.payload;
-    // },
+    fetchContactsStart(state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    fetchContactsSuccess(state, action) {
+      state.isLoading = false;
+      state.items = action.payload;
+    },
+    fetchContactsFailure(state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { addContact, deleteContact, updateSearchTerm } = contactsSlice.actions;
+export const {
+  addContactStart,
+  addContactSuccess,
+  addContactFailure,
+  deleteContact,
+  fetchContactsStart,
+  fetchContactsSuccess,
+  fetchContactsFailure,
+} = contactsSlice.actions;
+
+export const fetchContacts = () => async (dispatch) => {
+  try {
+    dispatch(fetchContactsStart());
+    const response = await axios.get('https://64b0f877062767bc48256aba.mockapi.io/contacts');
+    const data = response.data;
+    const contacts = data.map(({ name, phone }) => ({
+      id: name,
+      name,
+      phone,
+    }));
+
+    dispatch(fetchContactsSuccess(contacts));
+  } catch (error) {
+    dispatch(fetchContactsFailure(error.message));
+  }
+};
+
+export const addContact = (contact) => async (dispatch) => {
+  try {
+    dispatch(addContactStart());
+    const response = await axios.post('https://64b0f877062767bc48256aba.mockapi.io/contacts', contact);
+    const newContact = response.data;
+
+    dispatch(addContactSuccess(newContact));
+  } catch (error) {
+    dispatch(addContactFailure(error.message));
+  }
+};
 
 export default contactsSlice.reducer;
