@@ -1,7 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { fetchContacts, addContact} from './contactsRequests'
-//Воно не хоче додавати власний id на сервер. На ньому тільки 1, 2, 3, 4... які автоматично генеруються
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
