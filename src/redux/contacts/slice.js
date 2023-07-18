@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-
+import { fetchContacts, addContact} from './contactsRequests'
+//Воно не хоче додавати власний id на сервер. На ньому тільки 1, 2, 3, 4... які автоматично генеруються
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
@@ -49,33 +50,6 @@ export const {
   fetchContactsFailure,
 } = contactsSlice.actions;
 
-export const fetchContacts = () => async (dispatch) => {
-  try {
-    dispatch(fetchContactsStart());
-    const response = await axios.get('https://64b0f877062767bc48256aba.mockapi.io/contacts');
-    const data = response.data;
-    const contacts = data.map(({ name, phone }) => ({
-      id: name,
-      name,
-      phone,
-    }));
 
-    dispatch(fetchContactsSuccess(contacts));
-  } catch (error) {
-    dispatch(fetchContactsFailure(error.message));
-  }
-};
-
-export const addContact = (contact) => async (dispatch) => {
-  try {
-    dispatch(addContactStart());
-    const response = await axios.post('https://64b0f877062767bc48256aba.mockapi.io/contacts', contact);
-    const newContact = response.data;
-
-    dispatch(addContactSuccess(newContact));
-  } catch (error) {
-    dispatch(addContactFailure(error.message));
-  }
-};
 
 export default contactsSlice.reducer;

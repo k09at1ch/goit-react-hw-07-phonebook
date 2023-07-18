@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, fetchContacts } from '../../redux/contacts/slice';
+import {  fetchContacts } from '../../redux/contacts/contactsRequests';
+import { addContact } from '../../redux/contacts/contactsRequests';
 import axios from 'axios';
 
 function ContactForm() {
