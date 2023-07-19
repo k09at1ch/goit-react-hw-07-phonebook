@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {  fetchContacts } from '../../redux/contacts/contactsRequests';
 import { addContact } from '../../redux/contacts/contactsRequests';
 import axios from 'axios';
-
+import styles from './ContactForm.module.css';
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -52,22 +52,23 @@ function ContactForm() {
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={name}
-        onChange={handleNameChange}
-        placeholder="Name"
-      />
-      <input
-        type="text"
-        value={number}
-        onChange={handleNumberChange}
-        placeholder="Number"
-      />
-      <button onClick={handleAddContact}>Add Contact</button>
+    <div className={styles.formContainer}>
+      <form>
+        <input
+          type="text"
+          value={name}
+          onChange={handleNameChange}
+          placeholder="Name"
+        />
+        <input
+          type="text"
+          value={number}
+          onChange={handleNumberChange}
+          placeholder="Number"
+        />
+        <button type="button" onClick={handleAddContact}>Add Contact</button>
+      </form>
     </div>
   );
 }
-
 export default ContactForm;

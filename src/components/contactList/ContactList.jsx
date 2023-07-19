@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {  fetchContacts } from '../../redux/contacts/contactsRequests';
 import { deleteContact } from 'redux/contacts/slice';
 import axios from 'axios';
-
+import styles from './ContactList.module.css';
 function ContactList() {
   const contacts = useSelector((state) => state.contacts.items);
   const searchTerm = useSelector((state) => state.filter.searchTerm);
@@ -34,9 +34,9 @@ function ContactList() {
 
   return (
     <div>
-      <ul className="list">
+      <ul className={styles.list}>
         {filteredContacts.map((contact) => (
-          <li key={contact.id} className="listItem">
+          <li key={contact.id} className={styles.listItem}> 
             {contact.name}
             <br />
             {formatPhoneNumber(contact.phone)}
