@@ -1,16 +1,8 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {
-  fetchContactsStart,
-  fetchContactsSuccess,
-  fetchContactsFailure,
-  addContactStart,
-  addContactSuccess,
-  addContactFailure,
-} from './slice';
 
-export const fetchContacts = () => async (dispatch) => {
+export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async () => {
   try {
-    dispatch(fetchContactsStart());
     const response = await axios.get('https://64b0f877062767bc48256aba.mockapi.io/contacts');
     const data = response.data;
     const contacts = data.map(({ id, name, phone }) => ({
@@ -18,21 +10,18 @@ export const fetchContacts = () => async (dispatch) => {
       name,
       phone,
     }));
-    
-    dispatch(fetchContactsSuccess(contacts));
+    return contacts;
   } catch (error) {
-    dispatch(fetchContactsFailure(error.message));
+    throw new Error(error.message);
   }
-};
+});
 
-export const addContact = (contact) => async (dispatch) => {
+export const addContact = createAsyncThunk('contacts/addContact', async (contact) => {
   try {
-    dispatch(addContactStart());
     const response = await axios.post('https://64b0f877062767bc48256aba.mockapi.io/contacts', contact);
     const newContact = response.data;
-
-    dispatch(addContactSuccess(newContact));
+    return newContact;
   } catch (error) {
-    dispatch(addContactFailure(error.message));
+    throw new Error(error.message);
   }
-};
+});

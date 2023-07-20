@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {  fetchContacts } from '../../redux/contacts/contactsRequests';
-import { deleteContact } from 'redux/contacts/slice';
-import axios from 'axios';
+import { fetchContacts } from '../../redux/contacts/contactsRequests'; 
 import styles from './ContactList.module.css';
+import { deleteContact } from 'redux/contacts/slice';
 function ContactList() {
   const contacts = useSelector((state) => state.contacts.items);
-  const searchTerm = useSelector((state) => state.filter.searchTerm);
+  const searchTerm = useSelector((state) => state.filter.searchTerm); 
+  const isLoading = useSelector((state) => state.contacts.isLoading); 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const handleDeleteContact = async (contactId) => {
     try {
-      await axios.delete(`https://64b0f877062767bc48256aba.mockapi.io/contacts/${contactId}/`);
-
-      await dispatch(deleteContact({ id: contactId }));
-      await dispatch(fetchContacts());
+      await fetch(`https://64b0f877062767bc48256aba.mockapi.io/contacts/${contactId}/`, {
+        method: 'DELETE',
+      });
+      dispatch(deleteContact({ id: contactId }));
     } catch (error) {
       console.error('Error deleting contact:', error);
     }
@@ -32,11 +36,19 @@ function ContactList() {
     contact.name && contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (filteredContacts.length === 0) {
+    return <div>No contacts found.</div>; 
+  }
+
   return (
     <div>
       <ul className={styles.list}>
         {filteredContacts.map((contact) => (
-          <li key={contact.id} className={styles.listItem}> 
+          <li key={contact.id} className={styles.listItem}>
             {contact.name}
             <br />
             {formatPhoneNumber(contact.phone)}

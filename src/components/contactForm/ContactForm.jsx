@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchContacts, addContact } from '../../redux/contacts/contactsRequests';
-import axios from 'axios';
+import {  useDispatch } from 'react-redux';
+import { addContact } from 'redux/contacts/contactsRequests'; 
 import styles from './ContactForm.module.css';
 
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const contacts = useSelector((state) => state.contacts.items);
   const dispatch = useDispatch();
 
   const handleNameChange = (event) => {
@@ -18,42 +16,30 @@ function ContactForm() {
     setNumber(event.target.value);
   };
 
-  const handleAddContact = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     if (!name || !number) {
       return;
     }
 
-    const existingContact = contacts.find((contact) => contact.name === name);
-    if (existingContact) {
-      alert(`${name} is already in contacts.`);
-      return;
-    }
+    const newContact = {
+      name,
+      phone: number,
+    };
 
     try {
-      const response = await axios.get('https://64b0f877062767bc48256aba.mockapi.io/contacts');
-      const contactsFromServer = response.data;
-      const maxId = Math.max(...contactsFromServer.map((contact) => parseInt(contact.id)));
-
-      const newContact = {
-        id: String(maxId + 1),
-        name,
-        phone: number,
-      };
-
-      dispatch(addContact(newContact));
-
+      await dispatch(addContact(newContact));
       setName('');
       setNumber('');
-
-      await dispatch(fetchContacts());
     } catch (error) {
-      console.error('Error adding contact:', error);
+      console.error('Error adding contact:', error.message);
     }
   };
 
   return (
     <div className={styles.formContainer}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={name}
@@ -66,7 +52,7 @@ function ContactForm() {
           onChange={handleNumberChange}
           placeholder="Number"
         />
-        <button type="button" onClick={handleAddContact}>Add Contact</button>
+        <button type="submit">Add Contact</button>
       </form>
     </div>
   );
