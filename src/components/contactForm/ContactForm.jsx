@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {  fetchContacts } from '../../redux/contacts/contactsRequests';
-import { addContact } from '../../redux/contacts/contactsRequests';
+import { fetchContacts, addContact } from '../../redux/contacts/contactsRequests';
 import axios from 'axios';
 import styles from './ContactForm.module.css';
+
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -71,4 +71,5 @@ function ContactForm() {
     </div>
   );
 }
+
 export default ContactForm;
