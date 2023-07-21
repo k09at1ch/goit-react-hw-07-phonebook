@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchContacts } from '../../redux/contacts/contactsRequests'; 
+import { fetchContacts, deleteContact } from '../../redux/contacts/contactsRequests';
 import styles from './ContactList.module.css';
-import { deleteContact } from 'redux/contacts/slice';
+
 function ContactList() {
   const contacts = useSelector((state) => state.contacts.items);
-  const searchTerm = useSelector((state) => state.filter.searchTerm); 
-  const isLoading = useSelector((state) => state.contacts.isLoading); 
+  const searchTerm = useSelector((state) => state.filter.searchTerm);
+  const isLoading = useSelector((state) => state.contacts.isLoading);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,10 +15,7 @@ function ContactList() {
 
   const handleDeleteContact = async (contactId) => {
     try {
-      await fetch(`https://64b0f877062767bc48256aba.mockapi.io/contacts/${contactId}/`, {
-        method: 'DELETE',
-      });
-      dispatch(deleteContact({ id: contactId }));
+      await dispatch(deleteContact(contactId));
     } catch (error) {
       console.error('Error deleting contact:', error);
     }
@@ -41,7 +38,7 @@ function ContactList() {
   }
 
   if (filteredContacts.length === 0) {
-    return <div>No contacts found.</div>; 
+    return <div>No contacts found.</div>;
   }
 
   return (
